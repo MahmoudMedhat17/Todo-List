@@ -1,0 +1,23 @@
+{
+    "users":[
+        {
+            "name":"John Doe",
+            "email":"john.doe@example.com",
+            "password":"password123"
+        },
+        {
+            "name":"Smith john",
+            "email":"smith.john@example.com",
+            "password":"passBlueBus"
+        },{
+            "name":"Caronlina Adams",
+            "email":"caronlina.adams@example.com",
+            "password":"passGreenBus"
+        },
+        {
+            "name":"Emila Smith",
+            "email":"emila.smith@example.com",
+            "password":"12111990"
+        }
+    ]
+}
