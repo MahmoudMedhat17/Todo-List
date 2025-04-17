@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 
 
 interface userProps{
+  name:string;
   email:string;
   password:string;
 };
@@ -22,6 +23,7 @@ const Login = () => {
       const data = await response.json();
 
       const userData = data.users.find((user:userProps)=> user.email === email && user.password === password);
+
 
       if(userData){
         navigate("/");

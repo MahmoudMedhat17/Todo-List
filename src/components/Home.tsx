@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pencil, Trash2, CheckCircle, Plus,  } from "lucide-react";
@@ -24,7 +24,7 @@ const Home = () => {
 
   const [todos,setTodos] = useState<todoProps[]>([]);
   const [todoTitle, setTodoTitle] = useState("");
-  const [todoCreator, setTodoCreator] = useState("");
+  // const [todoCreator, setTodoCreator] = useState("");
   const [editTodoTitle, setEditTodoTitle] = useState("");
 
   const parsedData = localStorage.getItem("user");
@@ -32,16 +32,30 @@ const Home = () => {
 
   
 
+  useEffect(()=>{
+    if(!userData?.name) return;
+    const savedTodos = localStorage.getItem(`todos-list-${userData.name}`);
+    if(savedTodos){
+      setTodos(JSON.parse(savedTodos));
+    }
+  },[userData?.name]);
+  
+
+  useEffect(()=>{
+    if(!userData?.name) return;
+    localStorage.setItem(`todos-list-${userData.name}`,JSON.stringify(todos));
+  },[todos, userData?.name]);
+
   const addNewTodo = () =>{
 
     // This condition for disabling the create button from submitting if the input fields are empty
-    if(!todoTitle.trim() || !todoCreator.trim()) return;
+    if(!todoTitle.trim() || !userData.name.trim()) return;
 
     // This variable contains the new todo info like id, todo title, todo creator name, and checked as not completed or editable as this variable is for creating the todo
     const newTodo = {
       id:Date.now(),
       title:todoTitle,
-      creator:todoCreator,
+      creator:userData.name || "User",
       completed:false,
       editable:false
     };
@@ -50,7 +64,7 @@ const Home = () => {
     setTodos([newTodo, ...todos]);
     // After Clicking create button the todo title input and todo creator name become empty to tell the user that he / she can enter a new todo title and creator name
     setTodoTitle("");
-    setTodoCreator("");
+    // setTodoCreator("");
     // I'm checking here with this console.log if the button submits with the condition if(!todoTitle.trim() || !todoCreator.trim()) return; or not 
     console.log("test");
   };
@@ -101,11 +115,11 @@ const Home = () => {
           onChange={(e)=>{setTodoTitle(e.target.value)}}
           placeholder="Todo title"
         />
-        <Input
+        {/* <Input
           value={todoCreator}
           onChange={(e)=>{setTodoCreator(e.target.value)}}
           placeholder="Todo Creator"
-        />
+        /> */}
         <Button onClick={addNewTodo} variant="default">
           <Plus/>
           Create
@@ -114,7 +128,7 @@ const Home = () => {
 
       <div className="flex flex-col gap-10">
         {/* We loop over the todos array so we can display the todo contents of the user such as the todo title and todo creator. */}
-        <Reorder.Group axis="y" values={todos} onReorder={setTodos}>
+        <Reorder.Group axis="y" values={todos} onReorder={setTodos} className="space-y-10">
           {
             todos.map((todo)=>(
               <Reorder.Item key={todo.id} value={todo}>
@@ -122,18 +136,16 @@ const Home = () => {
                   {
                     todo.editable ? 
                     // If the user clicked on the pencil icon to edit a todo, this opens a new div with an input and an update button to edit the targeted todo.
-                      <CardContent className="flex-1">
-                        <div className="w-full flex items-center gap-4">
-                          {/* Input to let user update the todo title */}
-                          <Input
-                            className="flex-1"
-                            placeholder="Update the todo"
-                            value={editTodoTitle}
-                            onChange={(e)=>setEditTodoTitle(e.target.value)}
-                          />
-                          {/* Update button to update the todo */}
-                          <Button className="flex-1" onClick={()=>updateTodo(todo.id)}>Update</Button>
-                        </div>
+                      <CardContent className="flex-1 flex gap-4 items-center">
+                        {/* Input to let user update the todo title */}
+                        <Input
+                          className="flex-1"
+                          placeholder="Update the todo"
+                          value={editTodoTitle}
+                          onChange={(e)=>setEditTodoTitle(e.target.value)}
+                        />
+                        {/* Update button to update the todo */}
+                        <Button className="w-1/3" onClick={()=>updateTodo(todo.id)}>Update</Button>
                       </CardContent>
                       :
                       // Here display the todos of the user.

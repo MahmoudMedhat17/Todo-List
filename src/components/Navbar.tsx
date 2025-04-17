@@ -16,10 +16,10 @@ const Navbar = () => {
   const handleLogout = () =>{
     // Check if the user data from localStorage exists or not.
     if(userData){
-      // If exists then navigate to login page.
-      navigate("/login");
       // And remove the user Data from localStorage.
       localStorage.removeItem("user");
+      // If exists then navigate to login page.
+      navigate("/login");
     };
   };
 
